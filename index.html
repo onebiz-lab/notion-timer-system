@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>타이머 위젯 생성기 - 올인원</title>
+    <title>타이머 관리 대시보드</title>
     <style>
         * {
             margin: 0;
@@ -17,14 +17,265 @@
             min-height: 100vh;
         }
         
-        /* 전체 레이아ウ� */
+        /* 네비게이션 */
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .navbar-brand {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .nav-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .nav-btn-secondary:hover {
+            background: #f5f7ff;
+        }
+        
+        /* 메인 컨테이너 */
         .main-container {
             display: grid;
             grid-template-columns: 400px 1fr;
-            height: 100vh;
+            height: calc(100vh - 60px);
         }
         
-        /* 왼쪽 설정 패널 */
+        /* 대시보드 뷰 */
+        .dashboard-view {
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-header p {
+            color: #666;
+            font-size: 15px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .timers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .timer-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .timer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .timer-card-preview {
+            padding: 20px;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            position: relative;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .timer-badge {
+            background: #FFD700;
+            color: #ff4b2b;
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 10px;
+            margin-bottom: 8px;
+            width: fit-content;
+        }
+        
+        .timer-title {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .timer-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 12px;
+        }
+        
+        .timer-card-info {
+            padding: 20px;
+        }
+        
+        .timer-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .timer-date {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .timer-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .timer-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .timer-action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-view:hover {
+            background: #5568d3;
+        }
+        
+        .btn-copy {
+            background: #43e97b;
+            color: white;
+        }
+        
+        .btn-copy:hover {
+            background: #38d970;
+        }
+        
+        .btn-edit {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #d97706;
+        }
+        
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            flex: 0.5;
+        }
+        
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+        
+        /* 에디터 뷰 (기존 생성기) */
+        .editor-view {
+            display: none;
+        }
+        
+        .editor-view.active {
+            display: grid;
+        }
+        
         .settings-panel {
             background: white;
             padding: 30px;
@@ -37,7 +288,7 @@
             margin-bottom: 30px;
         }
         
-        .panel-header h1 {
+        .panel-header h2 {
             font-size: 24px;
             color: #333;
             margin-bottom: 8px;
@@ -170,7 +421,7 @@
             color: white;
         }
         
-        .generate-btn {
+        .save-btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -181,15 +432,15 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         
-        .generate-btn:hover {
+        .save-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
         
-        /* 오른쪽 미리보기 */
+        /* 미리보기 패널 */
         .preview-panel {
             display: flex;
             flex-direction: column;
@@ -205,25 +456,9 @@
             align-items: center;
         }
         
-        .preview-header h2 {
+        .preview-header h3 {
             font-size: 18px;
             color: #333;
-        }
-        
-        .copy-url-btn {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .copy-url-btn:hover {
-            background: #5568d3;
         }
         
         .preview-content {
@@ -354,45 +589,97 @@
             box-shadow: 0 6px 16px rgba(0,0,0,0.3);
         }
         
-        .url-box {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 30px;
-            border: 2px solid #e0e0e0;
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
         }
         
-        .url-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #666;
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h2 {
+            font-size: 24px;
+            color: #333;
             margin-bottom: 10px;
         }
         
-        .url-display {
+        .empty-state p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        /* 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .modal-url {
             background: #f8f9fa;
-            padding: 12px;
+            padding: 15px;
             border-radius: 6px;
             font-family: 'Courier New', monospace;
             font-size: 12px;
-            color: #333;
             word-break: break-all;
-            margin-bottom: 10px;
+            margin: 15px 0;
         }
         
-        .notice-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 30px;
-            border-radius: 4px;
-            font-size: 13px;
-            color: #856404;
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
         
-        .notice-box strong {
-            display: block;
-            margin-bottom: 8px;
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .modal-btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .modal-btn-secondary {
+            background: #e0e0e0;
+            color: #333;
         }
         
         /* 반응형 */
@@ -401,35 +688,76 @@
                 grid-template-columns: 1fr;
             }
             
-            .settings-panel {
-                border-right: none;
-                border-bottom: 1px solid #e0e0e0;
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .top-section {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .left-content {
-                text-align: center;
-            }
-            
-            .timer-display {
-                justify-content: center;
+            .timers-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
+    <!-- 네비게이션 -->
+    <div class="navbar">
+        <div class="navbar-brand">
+            <span>⏰</span>
+            <span>타이머 관리 대시보드</span>
+        </div>
+        <div class="navbar-actions">
+            <button class="nav-btn nav-btn-secondary" onclick="showView('dashboard')" id="dashboardBtn">📊 대시보드</button>
+            <button class="nav-btn nav-btn-primary" onclick="showView('editor')" id="editorBtn">➕ 새 타이머 만들기</button>
+        </div>
+    </div>
+
+    <!-- 대시보드 뷰 -->
+    <div class="dashboard-view" id="dashboardView">
+        <div class="dashboard-header">
+            <h1>타이머 관리</h1>
+            <p>생성한 타이머를 관리하고 노션에 임베드하세요</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTimers">0</div>
+                <div class="stat-label">전체 타이머</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeTimers">0</div>
+                <div class="stat-label">활성 타이머</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="expiredTimers">0</div>
+                <div class="stat-label">만료된 타이머</div>
+            </div>
+        </div>
+
+        <div class="timers-grid" id="timersGrid">
+            <!-- 타이머 카드들이 여기에 동적으로 추가됨 -->
+        </div>
+
+        <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">📭</div>
+            <h2>아직 생성된 타이머가 없습니다</h2>
+            <p>첫 번째 타이머를 만들어보세요!</p>
+            <button class="nav-btn nav-btn-primary" onclick="showView('editor')">➕ 타이머 만들기</button>
+        </div>
+    </div>
+
+    <!-- 에디터 뷰 -->
+    <div class="main-container editor-view" id="editorView">
         <!-- 왼쪽 설정 패널 -->
         <div class="settings-panel">
             <div class="panel-header">
-                <h1>⏰ 타이머 생성기</h1>
+                <h2 id="editorTitle">새 타이머 만들기</h2>
                 <p>실시간으로 미리보면서 커스터마이징하세요</p>
+            </div>
+            
+            <!-- 타이머 이름 -->
+            <div class="section">
+                <div class="section-title">🏷️ 타이머 이름</div>
+                <div class="form-group">
+                    <label class="form-label">관리용 이름</label>
+                    <input type="text" class="form-input" id="timerName" placeholder="예: 블랙프라이데이 타이머" oninput="updatePreview()">
+                    <div class="form-help">대시보드에서 구분하기 위한 이름입니다</div>
+                </div>
             </div>
             
             <!-- 기본 정보 -->
@@ -459,7 +787,7 @@
                 <div class="form-group">
                     <label class="form-label">버튼 클릭 시 이동할 URL</label>
                     <input type="url" class="form-input" id="buttonUrlInput" value="" placeholder="https://example.com/purchase" oninput="updatePreview()">
-                    <div class="form-help">예: https://yourshop.com/products 또는 https://forms.google.com/...</div>
+                    <div class="form-help">예: https://yourshop.com/products</div>
                 </div>
             </div>
             
@@ -501,14 +829,13 @@
                 </div>
             </div>
             
-            <button class="generate-btn" onclick="generateEmbedURL()">📋 임베드 URL 생성하기</button>
+            <button class="save-btn" onclick="saveTimer()" id="saveBtn">💾 타이머 저장하기</button>
         </div>
         
         <!-- 오른쪽 미리보기 -->
         <div class="preview-panel">
             <div class="preview-header">
-                <h2>👀 실시간 미리보기</h2>
-                <button class="copy-url-btn" onclick="copyEmbedURL()" id="copyBtn" style="display:none;">URL 복사</button>
+                <h3>👀 실시간 미리보기</h3>
             </div>
             
             <div class="preview-content">
@@ -539,32 +866,35 @@
                             </div>
                         </div>
                         
-                        <button class="cta-button" id="previewButton" onclick="handleButtonClick()">지금 신청 →</button>
+                        <button class="cta-button" id="previewButton">지금 신청 →</button>
                     </div>
                 </div>
             </div>
-            
-            <div class="url-box" id="urlBox" style="display:none;">
-                <div class="url-label">🔗 노션 임베드용 URL</div>
-                <div class="url-display" id="embedURL"></div>
+        </div>
+    </div>
+
+    <!-- URL 모달 -->
+    <div class="modal" id="urlModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔗 노션 임베드 URL</h3>
+                <p>아래 URL을 복사해서 노션에 임베드하세요</p>
             </div>
-            
-            <div class="notice-box">
-                <strong>📌 노션에 임베드하는 방법:</strong>
-                1. 위에서 "임베드 URL 생성하기" 클릭<br>
-                2. "URL 복사" 버튼으로 링크 복사<br>
-                3. 노션에서 <code>/embed</code> 입력<br>
-                4. URL 붙여넣기<br>
-                5. 크기 조정 (권장: 600px × 200px)
+            <div class="modal-url" id="modalUrl"></div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" onclick="copyModalURL()">📋 URL 복사</button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal()">닫기</button>
             </div>
         </div>
     </div>
 
     <script>
+        // 전역 변수
+        let timers = [];
+        let currentTimerId = null;
         let deadline = new Date();
         deadline.setHours(deadline.getHours() + 24);
         let selectedColor = 'red';
-        let buttonUrl = '';
         
         const colorSchemes = {
             red: { gradient: 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)', buttonColor: '#ff4b2b' },
@@ -575,14 +905,230 @@
             purple: { gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', buttonColor: '#764ba2' }
         };
         
-        // 버튼 클릭 핸들러
-        function handleButtonClick() {
-            const url = document.getElementById('buttonUrlInput').value;
-            if (url && url.trim() !== '') {
-                window.open(url, '_blank');
-            } else {
-                alert('버튼 URL을 먼저 설정해주세요!');
+        // 로컬 스토리지에서 타이머 로드
+        function loadTimers() {
+            const saved = localStorage.getItem('timers');
+            if (saved) {
+                timers = JSON.parse(saved);
+                renderDashboard();
             }
+        }
+        
+        // 로컬 스토리지에 타이머 저장
+        function saveTimers() {
+            localStorage.setItem('timers', JSON.stringify(timers));
+        }
+        
+        // 뷰 전환
+        function showView(view) {
+            if (view === 'dashboard') {
+                document.getElementById('dashboardView').style.display = 'block';
+                document.getElementById('editorView').classList.remove('active');
+                document.getElementById('dashboardBtn').classList.add('nav-btn-primary');
+                document.getElementById('dashboardBtn').classList.remove('nav-btn-secondary');
+                document.getElementById('editorBtn').classList.remove('nav-btn-primary');
+                document.getElementById('editorBtn').classList.add('nav-btn-secondary');
+                renderDashboard();
+                resetEditor();
+            } else {
+                document.getElementById('dashboardView').style.display = 'none';
+                document.getElementById('editorView').classList.add('active');
+                document.getElementById('dashboardBtn').classList.remove('nav-btn-primary');
+                document.getElementById('dashboardBtn').classList.add('nav-btn-secondary');
+                document.getElementById('editorBtn').classList.add('nav-btn-primary');
+                document.getElementById('editorBtn').classList.remove('nav-btn-secondary');
+            }
+        }
+        
+        // 에디터 초기화
+        function resetEditor() {
+            currentTimerId = null;
+            document.getElementById('editorTitle').textContent = '새 타이머 만들기';
+            document.getElementById('timerName').value = '';
+            document.getElementById('badgeInput').value = '🔥 긴급 마감 임박';
+            document.getElementById('titleInput').value = '특별 할인 이벤트';
+            document.getElementById('subtitleInput').value = '지금 바로 신청하세요!';
+            document.getElementById('buttonInput').value = '지금 신청';
+            document.getElementById('buttonUrlInput').value = '';
+            deadline = new Date();
+            deadline.setHours(deadline.getHours() + 24);
+            selectedColor = 'red';
+            updateDeadlineInput();
+            updatePreview();
+            setColor('red');
+            document.getElementById('saveBtn').textContent = '💾 타이머 저장하기';
+        }
+        
+        // 대시보드 렌더링
+        function renderDashboard() {
+            const grid = document.getElementById('timersGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (timers.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                updateStats();
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            grid.innerHTML = timers.map(timer => {
+                const isExpired = new Date(timer.deadline) < new Date();
+                const statusClass = isExpired ? 'status-expired' : 'status-active';
+                const statusText = isExpired ? '만료됨' : '활성';
+                const scheme = colorSchemes[timer.color];
+                
+                return `
+                    <div class="timer-card">
+                        <div class="timer-card-preview" style="background: ${scheme.gradient};">
+                            <div class="timer-badge" style="color: ${scheme.buttonColor};">${timer.badge}</div>
+                            <div class="timer-title">${timer.title}</div>
+                            <div class="timer-subtitle">${timer.subtitle}</div>
+                        </div>
+                        <div class="timer-card-info">
+                            <div class="timer-meta">
+                                <span class="timer-date">📅 ${new Date(timer.deadline).toLocaleDateString('ko-KR', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}</span>
+                                <span class="timer-status ${statusClass}">${statusText}</span>
+                            </div>
+                            <strong style="display: block; margin-bottom: 10px; color: #333;">${timer.name || '이름 없음'}</strong>
+                            <div class="timer-actions">
+                                <button class="timer-action-btn btn-view" onclick="viewTimer('${timer.id}')">👁️ 보기</button>
+                                <button class="timer-action-btn btn-copy" onclick="copyTimerURL('${timer.id}')">📋 URL</button>
+                                <button class="timer-action-btn btn-edit" onclick="editTimer('${timer.id}')">✏️ 수정</button>
+                                <button class="timer-action-btn btn-delete" onclick="deleteTimer('${timer.id}')">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            updateStats();
+        }
+        
+        // 통계 업데이트
+        function updateStats() {
+            const total = timers.length;
+            const active = timers.filter(t => new Date(t.deadline) >= new Date()).length;
+            const expired = total - active;
+            
+            document.getElementById('totalTimers').textContent = total;
+            document.getElementById('activeTimers').textContent = active;
+            document.getElementById('expiredTimers').textContent = expired;
+        }
+        
+        // 타이머 저장
+        function saveTimer() {
+            const timerData = {
+                id: currentTimerId || Date.now().toString(),
+                name: document.getElementById('timerName').value || '이름 없는 타이머',
+                badge: document.getElementById('badgeInput').value,
+                title: document.getElementById('titleInput').value,
+                subtitle: document.getElementById('subtitleInput').value,
+                button: document.getElementById('buttonInput').value,
+                url: document.getElementById('buttonUrlInput').value,
+                deadline: deadline.getTime(),
+                color: selectedColor,
+                createdAt: currentTimerId ? timers.find(t => t.id === currentTimerId).createdAt : Date.now()
+            };
+            
+            if (currentTimerId) {
+                // 수정
+                const index = timers.findIndex(t => t.id === currentTimerId);
+                timers[index] = timerData;
+            } else {
+                // 새로 추가
+                timers.push(timerData);
+            }
+            
+            saveTimers();
+            showView('dashboard');
+            alert('✅ 타이머가 저장되었습니다!');
+        }
+        
+        // 타이머 수정
+        function editTimer(id) {
+            const timer = timers.find(t => t.id === id);
+            if (!timer) return;
+            
+            currentTimerId = id;
+            document.getElementById('editorTitle').textContent = '타이머 수정';
+            document.getElementById('timerName').value = timer.name;
+            document.getElementById('badgeInput').value = timer.badge;
+            document.getElementById('titleInput').value = timer.title;
+            document.getElementById('subtitleInput').value = timer.subtitle;
+            document.getElementById('buttonInput').value = timer.button;
+            document.getElementById('buttonUrlInput').value = timer.url || '';
+            deadline = new Date(timer.deadline);
+            selectedColor = timer.color;
+            updateDeadlineInput();
+            updatePreview();
+            setColor(timer.color);
+            document.getElementById('saveBtn').textContent = '💾 수정 사항 저장';
+            
+            showView('editor');
+        }
+        
+        // 타이머 삭제
+        function deleteTimer(id) {
+            if (!confirm('정말 이 타이머를 삭제하시겠습니까?')) return;
+            
+            timers = timers.filter(t => t.id !== id);
+            saveTimers();
+            renderDashboard();
+        }
+        
+        // 타이머 보기
+        function viewTimer(id) {
+            const url = generateEmbedURL(id);
+            window.open(url, '_blank');
+        }
+        
+        // 타이머 URL 복사
+        function copyTimerURL(id) {
+            const url = generateEmbedURL(id);
+            document.getElementById('modalUrl').textContent = url;
+            document.getElementById('urlModal').classList.add('active');
+        }
+        
+        // URL 생성
+        function generateEmbedURL(id) {
+            const timer = timers.find(t => t.id === id);
+            if (!timer) return '';
+            
+            const params = new URLSearchParams();
+            params.append('embed', 'true');
+            params.append('badge', timer.badge);
+            params.append('title', timer.title);
+            params.append('subtitle', timer.subtitle);
+            params.append('button', timer.button);
+            params.append('deadline', timer.deadline);
+            params.append('color', timer.color);
+            if (timer.url) params.append('url', timer.url);
+            
+            const baseURL = window.location.href.split('?')[0];
+            return `${baseURL}?${params.toString()}`;
+        }
+        
+        // 모달 URL 복사
+        function copyModalURL() {
+            const url = document.getElementById('modalUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('✅ URL이 복사되었습니다!');
+                closeModal();
+            });
+        }
+        
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('urlModal').classList.remove('active');
         }
         
         // 타이머 업데이트
@@ -615,7 +1161,6 @@
             document.getElementById('previewTitle').textContent = document.getElementById('titleInput').value;
             document.getElementById('previewSubtitle').textContent = document.getElementById('subtitleInput').value;
             document.getElementById('previewButton').textContent = document.getElementById('buttonInput').value + ' →';
-            buttonUrl = document.getElementById('buttonUrlInput').value;
         }
         
         // 프리셋 시간 설정
@@ -625,7 +1170,6 @@
             updateDeadlineInput();
             updateTimer();
             
-            // 버튼 활성화 표시
             document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
         }
@@ -636,8 +1180,6 @@
             if (input) {
                 deadline = new Date(input);
                 updateTimer();
-                
-                // 프리셋 버튼 비활성화
                 document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
             }
         }
@@ -660,137 +1202,85 @@
             document.getElementById('previewButton').style.color = scheme.buttonColor;
             document.getElementById('previewBadge').style.color = scheme.buttonColor;
             
-            // 색상 옵션 활성화 표시
             document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
             document.querySelector(`[data-color="${color}"]`).classList.add('active');
         }
         
-        // 임베드 URL 생성
-        function generateEmbedURL() {
-            const params = new URLSearchParams();
-            params.append('badge', document.getElementById('badgeInput').value);
-            params.append('title', document.getElementById('titleInput').value);
-            params.append('subtitle', document.getElementById('subtitleInput').value);
-            params.append('button', document.getElementById('buttonInput').value);
-            params.append('deadline', deadline.getTime());
-            params.append('color', selectedColor);
-            
-            const btnUrl = document.getElementById('buttonUrlInput').value;
-            if (btnUrl && btnUrl.trim() !== '') {
-                params.append('url', encodeURIComponent(btnUrl));
-            }
-            
-            // 현재 페이지 URL을 기반으로 타이머 전용 URL 생성
-            const baseURL = window.location.href.split('?')[0];
-            const embedURL = `${baseURL}?embed=true&${params.toString()}`;
-            
-            document.getElementById('embedURL').textContent = embedURL;
-            document.getElementById('urlBox').style.display = 'block';
-            document.getElementById('copyBtn').style.display = 'block';
-            
-            // URL 박스로 스크롤
-            document.getElementById('urlBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        
-        // URL 복사
-        function copyEmbedURL() {
-            const url = document.getElementById('embedURL').textContent;
-            navigator.clipboard.writeText(url).then(() => {
-                const btn = document.getElementById('copyBtn');
-                const originalText = btn.textContent;
-                btn.textContent = '✓ 복사됨!';
-                btn.style.background = '#43e97b';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '';
-                }, 2000);
-            });
-        }
-        
-        // 페이지 로드 시 초기화
-        window.addEventListener('DOMContentLoaded', function() {
-            updateDeadlineInput();
-            updateTimer();
-            setInterval(updateTimer, 1000);
-            
-            // embed 모드 체크
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('embed') === 'true') {
-                // 임베드 모드: 타이머만 표시
-                document.body.innerHTML = `
-                    <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f5f5f5; padding: 20px;">
-                        <div class="countdown-container" id="embedTimer">
-                            <div class="top-section">
-                                <div class="left-content">
-                                    <div class="urgent-badge" id="embedBadge"></div>
-                                    <div class="title" id="embedTitle"></div>
-                                    <div class="subtitle" id="embedSubtitle"></div>
-                                </div>
-                                <div class="timer-display">
-                                    <div class="time-unit"><div class="time-value" id="embedDays">00</div><div class="time-label">일</div></div>
-                                    <div class="time-unit"><div class="time-value" id="embedHours">00</div><div class="time-label">시간</div></div>
-                                    <div class="time-unit"><div class="time-value" id="embedMinutes">00</div><div class="time-label">분</div></div>
-                                    <div class="time-unit"><div class="time-value" id="embedSeconds">00</div><div class="time-label">초</div></div>
-                                </div>
-                                <button class="cta-button" id="embedButton"></button>
+        // 임베드 모드 체크
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('embed') === 'true') {
+            // 임베드 모드로 렌더링 (기존 코드와 동일)
+            document.body.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f5f5f5; padding: 20px;">
+                    <div class="countdown-container" id="embedTimer">
+                        <div class="top-section">
+                            <div class="left-content">
+                                <div class="urgent-badge" id="embedBadge"></div>
+                                <div class="title" id="embedTitle"></div>
+                                <div class="subtitle" id="embedSubtitle"></div>
                             </div>
+                            <div class="timer-display">
+                                <div class="time-unit"><div class="time-value" id="embedDays">00</div><div class="time-label">일</div></div>
+                                <div class="time-unit"><div class="time-value" id="embedHours">00</div><div class="time-label">시간</div></div>
+                                <div class="time-unit"><div class="time-value" id="embedMinutes">00</div><div class="time-label">분</div></div>
+                                <div class="time-unit"><div class="time-value" id="embedSeconds">00</div><div class="time-label">초</div></div>
+                            </div>
+                            <button class="cta-button" id="embedButton"></button>
                         </div>
                     </div>
-                `;
-                
-                // 파라미터로부터 설정 로드
-                document.getElementById('embedBadge').textContent = decodeURIComponent(urlParams.get('badge') || '🔥 긴급 마감 임박');
-                document.getElementById('embedTitle').textContent = decodeURIComponent(urlParams.get('title') || '특별 할인 이벤트');
-                document.getElementById('embedSubtitle').textContent = decodeURIComponent(urlParams.get('subtitle') || '지금 바로 신청하세요!');
-                document.getElementById('embedButton').textContent = decodeURIComponent(urlParams.get('button') || '지금 신청') + ' →';
-                
-                // 버튼 URL 설정
-                const targetUrl = urlParams.get('url');
-                if (targetUrl) {
-                    document.getElementById('embedButton').onclick = function() {
-                        window.open(decodeURIComponent(targetUrl), '_blank');
-                    };
-                } else {
-                    document.getElementById('embedButton').onclick = function() {
-                        alert('구매 페이지로 이동!');
-                    };
-                }
-                
-                if (urlParams.get('deadline')) {
-                    deadline = new Date(parseInt(urlParams.get('deadline')));
-                }
-                
-                const color = urlParams.get('color') || 'red';
-                const scheme = colorSchemes[color];
-                document.getElementById('embedTimer').style.background = scheme.gradient;
-                document.getElementById('embedButton').style.color = scheme.buttonColor;
-                document.getElementById('embedBadge').style.color = scheme.buttonColor;
-                
-                // 임베드 모드 타이머 업데이트
-                setInterval(() => {
-                    const now = new Date().getTime();
-                    const distance = deadline.getTime() - now;
-                    
-                    if (distance < 0) {
-                        document.getElementById('embedDays').textContent = '00';
-                        document.getElementById('embedHours').textContent = '00';
-                        document.getElementById('embedMinutes').textContent = '00';
-                        document.getElementById('embedSeconds').textContent = '00';
-                        return;
-                    }
-                    
-                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                    
-                    document.getElementById('embedDays').textContent = String(days).padStart(2, '0');
-                    document.getElementById('embedHours').textContent = String(hours).padStart(2, '0');
-                    document.getElementById('embedMinutes').textContent = String(minutes).padStart(2, '0');
-                    document.getElementById('embedSeconds').textContent = String(seconds).padStart(2, '0');
-                }, 1000);
+                </div>
+            `;
+            
+            document.getElementById('embedBadge').textContent = decodeURIComponent(urlParams.get('badge') || '🔥 긴급 마감 임박');
+            document.getElementById('embedTitle').textContent = decodeURIComponent(urlParams.get('title') || '특별 할인 이벤트');
+            document.getElementById('embedSubtitle').textContent = decodeURIComponent(urlParams.get('subtitle') || '지금 바로 신청하세요!');
+            document.getElementById('embedButton').textContent = decodeURIComponent(urlParams.get('button') || '지금 신청') + ' →';
+            
+            const targetUrl = urlParams.get('url');
+            if (targetUrl) {
+                document.getElementById('embedButton').onclick = function() {
+                    window.open(decodeURIComponent(targetUrl), '_blank');
+                };
             }
-        });
+            
+            deadline = new Date(parseInt(urlParams.get('deadline')));
+            const color = urlParams.get('color') || 'red';
+            const scheme = colorSchemes[color];
+            document.getElementById('embedTimer').style.background = scheme.gradient;
+            document.getElementById('embedButton').style.color = scheme.buttonColor;
+            document.getElementById('embedBadge').style.color = scheme.buttonColor;
+            
+            setInterval(() => {
+                const now = new Date().getTime();
+                const distance = deadline.getTime() - now;
+                
+                if (distance < 0) {
+                    document.getElementById('embedDays').textContent = '00';
+                    document.getElementById('embedHours').textContent = '00';
+                    document.getElementById('embedMinutes').textContent = '00';
+                    document.getElementById('embedSeconds').textContent = '00';
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('embedDays').textContent = String(days).padStart(2, '0');
+                document.getElementById('embedHours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('embedMinutes').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('embedSeconds').textContent = String(seconds).padStart(2, '0');
+            }, 1000);
+        } else {
+            // 일반 모드
+            window.addEventListener('DOMContentLoaded', function() {
+                loadTimers();
+                updateDeadlineInput();
+                updateTimer();
+                setInterval(updateTimer, 1000);
+            });
+        }
     </script>
 </body>
 </html>
