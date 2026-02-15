@@ -17,7 +17,7 @@
             min-height: 100vh;
         }
         
-        /* 전체 레이아웃 */
+        /* 전체 레이아ウ� */
         .main-container {
             display: grid;
             grid-template-columns: 400px 1fr;
@@ -78,6 +78,12 @@
             font-weight: 500;
             color: #555;
             margin-bottom: 6px;
+        }
+        
+        .form-help {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
         }
         
         .form-input,
@@ -449,6 +455,12 @@
                     <label class="form-label">버튼 텍스트</label>
                     <input type="text" class="form-input" id="buttonInput" value="지금 신청" oninput="updatePreview()">
                 </div>
+                
+                <div class="form-group">
+                    <label class="form-label">버튼 클릭 시 이동할 URL</label>
+                    <input type="url" class="form-input" id="buttonUrlInput" value="" placeholder="https://example.com/purchase" oninput="updatePreview()">
+                    <div class="form-help">예: https://yourshop.com/products 또는 https://forms.google.com/...</div>
+                </div>
             </div>
             
             <!-- 마감 시간 -->
@@ -527,7 +539,7 @@
                             </div>
                         </div>
                         
-                        <button class="cta-button" id="previewButton">지금 신청 →</button>
+                        <button class="cta-button" id="previewButton" onclick="handleButtonClick()">지금 신청 →</button>
                     </div>
                 </div>
             </div>
@@ -552,6 +564,7 @@
         let deadline = new Date();
         deadline.setHours(deadline.getHours() + 24);
         let selectedColor = 'red';
+        let buttonUrl = '';
         
         const colorSchemes = {
             red: { gradient: 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)', buttonColor: '#ff4b2b' },
@@ -561,6 +574,16 @@
             orange: { gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', buttonColor: '#fa709a' },
             purple: { gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', buttonColor: '#764ba2' }
         };
+        
+        // 버튼 클릭 핸들러
+        function handleButtonClick() {
+            const url = document.getElementById('buttonUrlInput').value;
+            if (url && url.trim() !== '') {
+                window.open(url, '_blank');
+            } else {
+                alert('버튼 URL을 먼저 설정해주세요!');
+            }
+        }
         
         // 타이머 업데이트
         function updateTimer() {
@@ -592,6 +615,7 @@
             document.getElementById('previewTitle').textContent = document.getElementById('titleInput').value;
             document.getElementById('previewSubtitle').textContent = document.getElementById('subtitleInput').value;
             document.getElementById('previewButton').textContent = document.getElementById('buttonInput').value + ' →';
+            buttonUrl = document.getElementById('buttonUrlInput').value;
         }
         
         // 프리셋 시간 설정
@@ -650,6 +674,11 @@
             params.append('button', document.getElementById('buttonInput').value);
             params.append('deadline', deadline.getTime());
             params.append('color', selectedColor);
+            
+            const btnUrl = document.getElementById('buttonUrlInput').value;
+            if (btnUrl && btnUrl.trim() !== '') {
+                params.append('url', encodeURIComponent(btnUrl));
+            }
             
             // 현재 페이지 URL을 기반으로 타이머 전용 URL 생성
             const baseURL = window.location.href.split('?')[0];
@@ -714,6 +743,18 @@
                 document.getElementById('embedTitle').textContent = decodeURIComponent(urlParams.get('title') || '특별 할인 이벤트');
                 document.getElementById('embedSubtitle').textContent = decodeURIComponent(urlParams.get('subtitle') || '지금 바로 신청하세요!');
                 document.getElementById('embedButton').textContent = decodeURIComponent(urlParams.get('button') || '지금 신청') + ' →';
+                
+                // 버튼 URL 설정
+                const targetUrl = urlParams.get('url');
+                if (targetUrl) {
+                    document.getElementById('embedButton').onclick = function() {
+                        window.open(decodeURIComponent(targetUrl), '_blank');
+                    };
+                } else {
+                    document.getElementById('embedButton').onclick = function() {
+                        alert('구매 페이지로 이동!');
+                    };
+                }
                 
                 if (urlParams.get('deadline')) {
                     deadline = new Date(parseInt(urlParams.get('deadline')));
